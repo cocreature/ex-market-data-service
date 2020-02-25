@@ -4,7 +4,7 @@
  */
 package com.digitalasset.refapps.marketdataservice.publishing;
 
-import static com.digitalasset.refapps.marketdataservice.utils.AppParties.ALL_PARTIES;
+import static com.digitalasset.refapps.marketdataservice.utils.AppParties.*;
 import static com.digitalasset.refapps.utils.EventuallyUtil.eventually;
 
 import com.daml.ledger.javaapi.data.Party;
@@ -47,18 +47,18 @@ public class PublishingIT {
   private static final ObservationReference US_BOND_1 =
       new ObservationReference(
           "US Bond Market", new InstrumentId("ISIN 288 2839"), LocalDate.of(2021, 2, 11));
-  private static final ObservationReference EU_BOND_1 =
-      new ObservationReference(
-          "European Bond Market", new InstrumentId("ISIN 123 1244"), LocalDate.of(2021, 3, 20));
 
-  private static final Duration systemPeriodTime = Duration.ofSeconds(5);
+  private static final Duration systemPeriodTime = Duration.ofSeconds(3);
 
   private static final Sandbox sandbox =
       Sandbox.builder()
           .dar(RELATIVE_DAR_PATH)
           .parties(OPERATOR_PARTY.getValue())
           .useWallclockTime()
-          .setupAppCallback(Main.runBots(new AppParties(ALL_PARTIES), systemPeriodTime))
+          .setupAppCallback(
+              Main.runBots(
+                  new AppParties(new String[] {"MarketDataProvider1", "Operator"}),
+                  systemPeriodTime))
           .build();
 
   @ClassRule public static ExternalResource compile = sandbox.getClassRule();
@@ -99,26 +99,18 @@ public class PublishingIT {
     waitForTheWholeSystemToSetup();
 
     observePublication(
-        MARKET_DATA_VENDOR_PARTY,
-        observation(US_BOND_1, "2019-11-12T12:30:00Z", cleanprice("1")),
-        observation(EU_BOND_1, "2019-11-12T12:30:00Z", cleanprice("1000")));
+        MARKET_DATA_VENDOR_PARTY, observation(US_BOND_1, "2019-11-12T12:30:00Z", cleanprice("1")));
     observePublication(
-        ENDUSER_PARTY,
-        observation(US_BOND_1, "2019-11-12T12:30:00Z", cleanprice("1")),
-        observation(
-            US_BOND_1,
-            "2019-11-12T12:30:00Z",
-            dirtyprice("1", "1.0150136986", "0.0150136986", LocalDate.of(2020, 2, 11), "0.02")));
+        ENDUSER_PARTY, observation(US_BOND_1, "2019-11-12T12:30:00Z", cleanprice("1")));
 
     startModelClock();
 
+    System.err.println("sleeping");
+    Thread.sleep(11000);
+    System.err.println("awake");
+
     observePublication(
-        ENDUSER_PARTY,
-        observation(US_BOND_1, "2019-11-12T14:30:00Z", cleanprice("2")),
-        observation(
-            US_BOND_1,
-            "2019-11-12T14:30:00Z",
-            dirtyprice("2", "2.0150136986", "0.0150136986", LocalDate.of(2020, 2, 11), "0.02")));
+        ENDUSER_PARTY, observation(US_BOND_1, "2019-11-12T14:30:00Z", cleanprice("2")));
   }
 
   /**

@@ -41,7 +41,7 @@ daml trigger \
     --ledger-port ${SANDBOX_PORT} \
     --ledger-party MarketDataVendor &
 
-daml trigger \
+echo daml trigger \
     --wall-clock-time \
     --dar "${DAR_FILE}" \
     --trigger-name DA.RefApps.MarketDataService.Triggers.Enrichment:enrichCleanPriceWithAccrualTrigger \
