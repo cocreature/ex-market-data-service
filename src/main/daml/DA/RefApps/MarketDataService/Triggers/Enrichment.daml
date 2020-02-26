@@ -71,13 +71,24 @@ publicationRule transformObservation party activeContracts _ _ () = do
 
     let (nonFreshStreams, freshStreams) =
           partition (\(_, s) -> observationHasChanged s.observation newObservation) ownDataStreams
+
+{-
+    debug ("all owned streams:")
+    forA_ ownDataStreams (\(sCid, stream) -> debug ("  * " <> toStr stream))
+    debug ("nonFreshStreams:")
+    forA_ nonFreshStreams (\(sCid, dataStream) -> debug ("  * " <> toStr dataStream))
+    debug ("freshStreams:")
+    forA_ freshStreams (\(sCid, freshStream) -> debug ("  * " <> toStr freshStream))
+-}
+
     -- !!!
     -- If either forA_ is commented out, the error is not reproducible!!!
     -- !!!  
     forA_ nonFreshStreams (\(sCid, dataStream) -> do
       debug ("UpdateObservation: " <> toStr dataStream)
       dedupExercise sCid UpdateObservation with time = newObservation.time, newValue = newObservation.value)
-    forA_ freshStreams (\(sCid, freshStream) ->
+    forA_ freshStreams (\(sCid, freshStream) -> do
+      debug ("Considering UpdLic:    " <> toStr freshStream)
       whenSome mbCurrentTime $ \(_, currentTime) ->
         when (freshStream.lastUpdated /= currentTime.currentTime) $ do
           debug ("UpdateLicenses:    " <> toStr freshStream)
