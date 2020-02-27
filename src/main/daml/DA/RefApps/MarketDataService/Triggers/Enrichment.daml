@@ -57,8 +57,11 @@ publicationRule transformObservation party activeContracts _ _ () = do
       ownEmptyDataStreams = filter (\(_, s) -> s.publisher.party == party) emptyDataStreams
       mbCurrentTime = head $ getContracts @CurrentTime activeContracts
 
+  whenSome mbCurrentTime $ \(_, currentTime) ->
+    debug ("CurrentTime:        " <> show currentTime.currentTime)
+
   forA_ ownPublications (\(_, p) -> do
-    debug ("Publication:       " <> oToStr p.observation True)
+    debug ("Publication:        " <> oToStr p.observation True)
 
     let newObservation = transformObservation p.observation
 --    debug ("Enriched:          " <> oToStr newObservation True)
@@ -85,13 +88,13 @@ publicationRule transformObservation party activeContracts _ _ () = do
     -- If either forA_ is commented out, the error is not reproducible!!!
     -- !!!  
     forA_ nonFreshStreams (\(sCid, dataStream) -> do
-      debug ("UpdateObservation: " <> toStr dataStream)
+      debug ("UpdateObservation:  " <> toStr dataStream)
       dedupExercise sCid UpdateObservation with time = newObservation.time, newValue = newObservation.value)
     forA_ freshStreams (\(sCid, freshStream) -> do
-      debug ("Considering UpdLic:    " <> toStr freshStream)
+      debug ("Considering UpdLic: " <> toStr freshStream)
       whenSome mbCurrentTime $ \(_, currentTime) ->
         when (freshStream.lastUpdated /= currentTime.currentTime) $ do
-          debug ("UpdateLicenses:    " <> toStr freshStream)
+          debug ("UpdateLicenses:     " <> toStr freshStream)
           dedupExercise sCid UpdateLicenses))
   debug ("}<<<<<<<<<<<<<<<<<hello trigger end")
 
