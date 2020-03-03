@@ -4,7 +4,6 @@
  */
 package com.digitalasset.refapps.marketdataservice.publishing;
 
-import static com.digitalasset.refapps.marketdataservice.utils.AppParties.*;
 import static com.digitalasset.refapps.utils.EventuallyUtil.eventually;
 
 import com.daml.ledger.javaapi.data.Party;
@@ -107,7 +106,7 @@ public class PublishingIT {
     startModelClock();
 
     System.err.println("sleeping");
-    Thread.sleep(11000);
+    Thread.sleep(11_000);
     System.err.println("awake");
 
     observePublication(
