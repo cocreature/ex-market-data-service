@@ -55,6 +55,7 @@ public class PublishingIT {
           .dar(RELATIVE_DAR_PATH)
           .parties(OPERATOR_PARTY.getValue())
           .useWallclockTime()
+          //          .logLevel(Sandbox.LogLevel.TRACE)
           .setupAppCallback(
               Main.runBots(
                   new AppParties(new String[] {"MarketDataProvider1", "Operator"}),
