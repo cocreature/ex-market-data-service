@@ -10,6 +10,7 @@ import static com.digitalasset.refapps.utils.EventuallyUtil.eventually;
 import com.daml.ledger.javaapi.data.Party;
 import com.digitalasset.refapps.marketdataservice.Main;
 import com.digitalasset.refapps.marketdataservice.utils.AppParties;
+import com.digitalasset.testing.junit4.LogLevel;
 import com.digitalasset.testing.junit4.Sandbox;
 import com.digitalasset.testing.ledger.DefaultLedgerAdapter;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -55,7 +56,7 @@ public class PublishingIT {
           .dar(RELATIVE_DAR_PATH)
           .parties(OPERATOR_PARTY.getValue())
           .useWallclockTime()
-          //          .logLevel(Sandbox.LogLevel.TRACE)
+          .logLevel(LogLevel.TRACE)
           .setupAppCallback(Main.runBots(new AppParties(ALL_PARTIES), systemPeriodTime))
           .build();
 
