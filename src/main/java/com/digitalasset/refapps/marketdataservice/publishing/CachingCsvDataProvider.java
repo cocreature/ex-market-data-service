@@ -9,6 +9,7 @@ import static com.digitalasset.refapps.marketdataservice.utils.BotUtil.filterTem
 import com.daml.ledger.javaapi.data.Identifier;
 import com.daml.ledger.javaapi.data.Template;
 import com.daml.ledger.rxjava.components.LedgerViewFlowable.LedgerView;
+import com.digitalasset.refapps.marketdataservice.Main;
 import com.google.common.collect.Sets;
 import da.refapps.marketdataservice.datasource.DataSource;
 import da.refapps.marketdataservice.marketdatatypes.ObservationReference;
@@ -23,6 +24,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CachingCsvDataProvider implements PublishingDataProvider {
 
@@ -31,6 +34,7 @@ public class CachingCsvDataProvider implements PublishingDataProvider {
           ObservationReference, ConcurrentLinkedQueue<ObservationTimeWithValue>>
       cache = new ConcurrentHashMap<>();
   private final Function<String, String> readFile;
+  private final static Logger logger = LoggerFactory.getLogger(CachingCsvDataProvider.class);
 
   public CachingCsvDataProvider() {
     this.readFile = CachingCsvDataProvider::readFileFromDataDir;
@@ -57,7 +61,9 @@ public class CachingCsvDataProvider implements PublishingDataProvider {
 
   public static String readFileFromDataDir(String path) {
     try {
-      return new String(Files.readAllBytes(Paths.get(DATA_DIR, path)));
+      String result = new String(Files.readAllBytes(Paths.get(DATA_DIR, path)));
+      logger.info("Reading CSV from {}", path);
+      return result;
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
