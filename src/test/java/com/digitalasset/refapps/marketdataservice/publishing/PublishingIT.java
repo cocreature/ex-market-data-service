@@ -4,6 +4,7 @@
  */
 package com.digitalasset.refapps.marketdataservice.publishing;
 
+import static com.digitalasset.refapps.marketdataservice.utils.AppParties.ALL_PARTIES;
 import static com.digitalasset.refapps.utils.EventuallyUtil.eventually;
 
 import com.daml.ledger.javaapi.data.Party;
@@ -55,10 +56,7 @@ public class PublishingIT {
           .parties(OPERATOR_PARTY.getValue())
           .useWallclockTime()
           //          .logLevel(Sandbox.LogLevel.TRACE)
-          .setupAppCallback(
-              Main.runBots(
-                  new AppParties(new String[] {"MarketDataProvider1", "Operator"}),
-                  systemPeriodTime))
+          .setupAppCallback(Main.runBots(new AppParties(ALL_PARTIES), systemPeriodTime))
           .build();
 
   @ClassRule public static ExternalResource compile = sandbox.getClassRule();
