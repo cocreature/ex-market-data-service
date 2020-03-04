@@ -69,20 +69,18 @@ publicationRule transformObservation party activeContracts _ _ () = do
     forA_
       (filter (\(_, s) -> s.reference == p.observation.label) ownEmptyDataStreams)
       (\(sCid, emptyDataStream) -> do
---        debug ("Starting stream: " <> (show emptyDataStream))
+        debug ("Starting stream:  " <> (show emptyDataStream))
         dedupExercise sCid StartDataStream with newObservation)
 
     let (nonFreshStreams, freshStreams) =
           partition (\(_, s) -> observationHasChanged s.observation newObservation) ownDataStreams
 
-{-
     debug ("all owned streams:")
     forA_ ownDataStreams (\(sCid, stream) -> debug ("  * " <> toStr stream))
     debug ("nonFreshStreams:")
     forA_ nonFreshStreams (\(sCid, dataStream) -> debug ("  * " <> toStr dataStream))
     debug ("freshStreams:")
     forA_ freshStreams (\(sCid, freshStream) -> debug ("  * " <> toStr freshStream))
--}
 
     -- !!!
     -- If either forA_ is commented out, the error is not reproducible!!!
@@ -143,3 +141,12 @@ enrichCleanPriceWithAccrual observation@Observation{ value = CleanPrice cleanPri
     accrual = accruedInterest currentDate bond
     dirtyPrice = cleanPrice + accrual
 enrichCleanPriceWithAccrual someOtherObservation = someOtherObservation
+
+test: Scenario ()
+test = scenario do
+{-
+DataStream {observation = Observation {label = ObservationReference {market = "US Bond Market", instrumentId = InstrumentId "ISIN 288 2839", maturityDate = 2021-02-11}, time = 2019-11-12T12:30:00Z, value = CleanPrice {clean = 1.0}}, consumers = [Consumer {party = 'EndUser'},Consumer {party = 'AnalyticsVendor'}], publisher = Publisher {party = 'MarketDataVendor'}, published = 2019-11-12T12:30:00Z, operator = 'Operator', lastUpdated = 2019-11-12T14:30:00Z}"
+-}
+  
+
+  pure ()
